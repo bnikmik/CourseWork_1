@@ -1,60 +1,65 @@
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Objects;
+
 public class Main {
     static Employee[] employees = new Employee[10];
 
+    /*
+    Print a list of all employees
+     */
     public static void printEmployeesList() {
         System.out.println("Список всех сотрудников со всеми данными:");
-        for (Employee employee : employees) {
-            if (employee != null) {
-                System.out.println(employee);
-            }
-        }
+        Arrays.stream(employees)
+                .filter(Objects::nonNull)
+                .forEach(System.out::println);
     }
 
-    public static double printTotalSalaries() {
-        double totalSalaries = 0;
-        for (Employee employee : employees) {
-            if (employee != null) {
-                totalSalaries += employee.getSalary();
-            }
-        }
-        return totalSalaries;
+    /*
+    Calculate the sum of all salaries
+     */
+    public static double calcTotalSalaries() {
+        return Arrays.stream(employees)
+                .filter(Objects::nonNull)
+                .map(Employee::getSalary)
+                .reduce((aDouble, aDouble2) -> aDouble += aDouble2).orElse(0d);
     }
 
-    public static double printAverageSalary() {
-        return printTotalSalaries() / Employee.getCount();
+    /*
+    Calculate the average salary of all employees
+     */
+    public static double calcAverageSalary() {
+        return calcTotalSalaries() / Employee.getCount();
     }
 
+    /*
+    Find an employee with a minimum wage.
+     */
     public static Employee findEmployeeWithMinSalary() {
-        double minSalary = Double.MAX_VALUE;
-        int temp = 0;
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i] != null && employees[i].getSalary() < minSalary) {
-                minSalary = employees[i].getSalary();
-                temp = i;
-            }
-        }
-        return employees[temp];
+        return Arrays.stream(employees)
+                .filter(Objects::nonNull)
+                .min(Comparator.comparingDouble(Employee::getSalary))
+                .get();
     }
 
+    /*
+    Find an employee with a maximum wage.
+     */
     public static Employee findEmployeeWithMaxSalary() {
-        double maxSalary = Double.MIN_VALUE;
-        int temp = 0;
-        for (int i = 0; i < employees.length; i++) {
-            if (employees[i] != null && employees[i].getSalary() > maxSalary) {
-                maxSalary = employees[i].getSalary();
-                temp = i;
-            }
-        }
-        return employees[temp];
+        return Arrays.stream(employees)
+                .filter(Objects::nonNull)
+                .max(Comparator.comparingDouble(Employee::getSalary))
+                .get();
     }
 
+    /*
+    Print the full name of all employees.
+     */
     public static void printEmployeesFullName() {
         System.out.println("Список ФИО всех сотрудников:");
-        for (Employee employee : employees) {
-            if (employee != null) {
-                System.out.println(employee.getFullName());
-            }
-        }
+        Arrays.stream(employees)
+                .filter(Objects::nonNull)
+                .forEach(employee -> System.out.println(employee.getFullName()));
     }
 
     public static void main(String[] args) {
@@ -64,8 +69,8 @@ public class Main {
         employees[3] = new Employee("Стрелков Юлий Андреевич", 3, 21_125);
         employees[4] = new Employee("Гришин Савелий Валерьевич", 2, 21_500);
         printEmployeesList();
-        System.out.println("Сумма всех заработных плат: " + printTotalSalaries());
-        System.out.println("Среднее значение зарплат: " + printAverageSalary());
+        System.out.println("Сумма всех заработных плат: " + calcTotalSalaries());
+        System.out.println("Среднее значение зарплат: " + calcAverageSalary());
         System.out.println("Минимальная зарплата - " + findEmployeeWithMinSalary());
         System.out.println("Максимальная зарплата - " + findEmployeeWithMaxSalary());
         printEmployeesFullName();
